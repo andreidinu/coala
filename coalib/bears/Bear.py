@@ -274,6 +274,7 @@ class Bear(Printer, LogPrinterMixin, metaclass=bearclass):
         return self.run(*args, **kwargs)
 
     def execute(self, *args, **kwargs):
+        debug = kwargs.pop('debug', False)
         name = self.name
         try:
             self.debug('Running bear {}...'.format(name))
@@ -281,6 +282,9 @@ class Bear(Printer, LogPrinterMixin, metaclass=bearclass):
             result = self.run_bear_from_section(args, kwargs)
             return [] if result is None else list(result)
         except (Exception, SystemExit):
+            if debug:  # pragma: no cover
+                raise
+
             if self.kind() == BEAR_KIND.LOCAL:
                 self.warn('Bear {} failed to run on file {}. Take a look '
                           'at debug messages (`-V`) for further '
